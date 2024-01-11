@@ -1,22 +1,30 @@
 #include <Wire.h>
 // SSD1306: 0x3C
 #include <Adafruit_SSD1306.h>
+#include <Adafruit_NeoPixel.h>
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels, 32 as default.
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 // set the interval of the threading.
 #define threadingInterval 600
+#define BRIGHTNESS 10
+#define NUMPIXELS 2
+#define RGB_LED 23
 
 void InitScreen();
 void screenUpdate();
 void InfoUpdateThreading(void *pvParameter);
 void Eric_Servo_Check(bool searchCommand);
+void InitRGB();
+void RainBow();
+uint32_t Wheel(byte WheelPos);
+
 // Creat Handler
 TaskHandle_t ScreenUpdateHandle;
 //Creat SSD1306 object
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
+Adafruit_NeoPixel matrix = Adafruit_NeoPixel(NUMPIXELS, RGB_LED, NEO_GRB + NEO_KHZ800);
 /*
 Initialzie OLED
 */
@@ -61,8 +69,9 @@ void InfoUpdateThreading(void *pvParameter){
     getFeedBack();
     getWifiStatus();
     screenUpdate();
-    delay(threadingInterval);
     Eric_Servo_Check(searchCmd);
+    RainBow();
+    delay(threadingInterval); 
   }
 }
 //Cheak all the Servo have been detected and worked well
@@ -108,4 +117,34 @@ void Eric_Servo_Check(bool searchCommand)
     searchCmd = false;
 }
 
+void InitRGB(){
+  matrix.setBrightness(BRIGHTNESS);
+  matrix.begin();
+  matrix.show();
+}
+
+void RainBow(){
+  uint16_t i, j;
+  for(j=0; j<256; j++) {
+    matrix.setPixelColor(i, Wheel((i*1+j) & 255));
+    matrix.show();
+    delay(30);
+  }
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  if(WheelPos < 85) {
+    return matrix.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  } 
+  else if(WheelPos < 170) {
+    WheelPos -= 85;
+    return matrix.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  } 
+  else {
+    WheelPos -= 170;
+    return matrix.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+}
 

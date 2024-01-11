@@ -97,7 +97,9 @@ void Interface_Setup()
     SPIFFS_Init();
     
     getMAC();
-    
+
+    InitRGB();
+
     OLED_Init();
     Serial.println(F("OLED OK."));
 
@@ -113,6 +115,7 @@ void Interface_Setup()
 
     Thread_Init();
     Serial.println(F("THREAD OK."));
+    matrix.setPixelColor(1,0,255,0);
 }
 
 /*

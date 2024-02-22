@@ -887,15 +887,19 @@
                                 {
                                     //Set Default Pos
                                     case 4:
-                                        toggleCheckbox(9, 0, 0, 0);
+                                        toggleCheckbox(9,0,0,0);
                                         break;
                                     //Set Grab Pos
                                     case 5:
                                         toggleCheckbox(8,0,0,0);
                                         break;
-                                    //Set Land Pos
+                                    //Set Land Pos #ELBOW
                                     case 1:
                                         toggleCheckbox(7,0,0,0);
+                                        break;
+                                    //Set Land Pos #WRIST
+                                    case 2: 
+                                        toggleCheckbox(6,0,0,0);
                                         break;
                                     //Pos ctrl Servo 1
                                     case 0: 
@@ -914,7 +918,7 @@
                                     //Pos ctrl Servo 3
                                     case 10: 
                                         toggleCheckbox(1,6,2,0);
-                                        console.log("pressed 10");
+                                        //console.log("pressed 10");
                                         break;
                                     case 11: 
                                         toggleCheckbox(1,5,2,0); 

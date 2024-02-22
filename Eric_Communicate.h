@@ -66,6 +66,8 @@ void SaveParam_Pos();
 void SaveGrabPos();
 void SaveLandPos();
 void Move_To_Desired_Pos();
+void Move_To_Land_Pos_Elbow_Wrist();
+void Move_To_Land_Pos_Wrist_Elbow();
 void Move_To_Grab_Pos();
 void SetMid(int Index);
 
@@ -190,8 +192,8 @@ void webCtrlServer(){
           case 1:Individual_ctrl(cmdI,cmdA);break;
         //case 2 for whole control
           case 2:Whole_Ctrl(cmdI);break;
-
-          case 7: Move_To_Desired_Pos();break;
+          case 6: Move_To_Land_Pos_Wrist_Elbow();break;
+          case 7: Move_To_Land_Pos_Elbow_Wrist();break;
           case 8: Move_To_Grab_Pos();break;
           case 9: Move_To_Desired_Pos();break;
         }
@@ -618,7 +620,7 @@ void SaveLandPos()
     {
       if(Eric_Arm_Status[i] == DETECTED)
       {   
-          Eric_AfterGrab_Pos[i] = float(Eric_Arm_FB[i].pos);
+          Eric_Land_Pos[i] = float(Eric_Arm_FB[i].pos);
       }
     }
     //Save
@@ -630,10 +632,29 @@ void SaveLandPos()
 
 void Move_To_Grab_Pos()
 {
-  st.RegWritePosEx(Eric_Arm_ID[WRIST_2],Eric_AfterGrab_Pos[WRIST_2],Eric_Desire_Speed[WRIST_2]);
+  st.WritePosEx(Eric_Arm_ID[WRIST_2],Eric_AfterGrab_Pos[WRIST_2],Eric_Desire_Speed[WRIST_2]);
   vTaskDelay(3000/portTICK_PERIOD_MS);
-  st.RegWritePosEx(Eric_Arm_ID[ELBOW],Eric_AfterGrab_Pos[ELBOW],Eric_Desire_Speed[ELBOW]);
+  st.WritePosEx(Eric_Arm_ID[ELBOW],Eric_AfterGrab_Pos[ELBOW],Eric_Desire_Speed[ELBOW]);
 
+}
+
+void Move_To_Land_Pos_Elbow_Wrist()
+{
+  st.WritePosEx(Eric_Arm_ID[ELBOW],Eric_Land_Pos[ELBOW],Eric_Desire_Speed[ELBOW],Eric_Desire_Acc[ELBOW]);
+  st.WritePosEx(Eric_Arm_ID[WRIST],Eric_Land_Pos[WRIST],Eric_Desire_Speed[WRIST],Eric_Desire_Acc[WRIST]);
+  st.WritePosEx(Eric_Arm_ID[HAND],Eric_Land_Pos[HAND],Eric_Desire_Speed[HAND],Eric_Desire_Acc[HAND]);
+  vTaskDelay(3000/portTICK_PERIOD_MS);
+  st.WritePosEx(Eric_Arm_ID[WRIST_2],Eric_Land_Pos[WRIST_2],Eric_Desire_Speed[WRIST_2],Eric_Desire_Acc[WRIST_2]);
+  
+}
+
+void Move_To_Land_Pos_Wrist_Elbow()
+{
+  st.WritePosEx(Eric_Arm_ID[WRIST],Eric_Land_Pos[WRIST],Eric_Desire_Speed[WRIST],Eric_Desire_Acc[WRIST]);
+  st.WritePosEx(Eric_Arm_ID[HAND],Eric_Land_Pos[HAND],Eric_Desire_Speed[HAND],Eric_Desire_Acc[HAND]);
+  st.WritePosEx(Eric_Arm_ID[WRIST_2],Eric_Land_Pos[WRIST_2],Eric_Desire_Speed[WRIST_2],Eric_Desire_Acc[WRIST_2]);
+  vTaskDelay(3000/portTICK_PERIOD_MS);
+  st.WritePosEx(Eric_Arm_ID[ELBOW],Eric_Land_Pos[ELBOW],Eric_Desire_Speed[ELBOW],Eric_Desire_Acc[ELBOW]);
 }
 //Move to Set Pos
 void Move_To_Desired_Pos()

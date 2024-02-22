@@ -63,7 +63,10 @@ void ID_Rotate(int cmdInput);
 
 void SaveParam_Acc_Speed();
 void SaveParam_Pos();
+void SaveGrabPos();
+void SaveLandPos();
 void Move_To_Desired_Pos();
+void Move_To_Grab_Pos();
 void SetMid(int Index);
 
 void clientThreading(void *pvParameter);
@@ -188,6 +191,8 @@ void webCtrlServer(){
         //case 2 for whole control
           case 2:Whole_Ctrl(cmdI);break;
 
+          case 7: Move_To_Desired_Pos();break;
+          case 8: Move_To_Grab_Pos();break;
           case 9: Move_To_Desired_Pos();break;
         }
   });
@@ -425,6 +430,12 @@ void Whole_Ctrl(int ctrltype)
     //(2,8,0,0) Set Cur position As Mid
     case 8:
       SetMid(ERIC_PART_SELECT);
+      break;
+    case 9:
+      SaveGrabPos();
+      break;
+    case 10:
+      SaveLandPos();
   }
 }
 
@@ -442,7 +453,7 @@ void Individual_ctrl(int ctrltype,int ctrlpart)
       if(Eric_Arm_FB[ctrlpart].mode==0)
       {
         //pos limited
-        st.WritePosEx(Eric_Arm_ID[ctrlpart], ServoDigitalRange_ST - 1, Eric_Desire_Speed[ctrlpart], Eric_Desire_Acc[ctrlpart]);
+        st.WritePosEx(Eric_Arm_ID[ctrlpart], Eric_Range_upper[ctrlpart] - 1, Eric_Desire_Speed[ctrlpart], Eric_Desire_Acc[ctrlpart]);
       }
       //Motor Mode
       if(Eric_Arm_FB[ctrlpart].mode==3)
@@ -582,6 +593,47 @@ void SaveParam_Pos()
     NVS.setFloat("Pos2",Eric_Initial_Pos[2]);
     NVS.setFloat("Pos3",Eric_Initial_Pos[3]);
     Serial.println("Save Acc Speed param from Web.");
+}
+
+void SaveGrabPos()
+{
+  for(int i=0;i<DOF_NUM;i++)
+    {
+      if(Eric_Arm_Status[i] == DETECTED)
+      {   
+          Eric_AfterGrab_Pos[i] = float(Eric_Arm_FB[i].pos);
+      }
+    }
+    //Save
+    NVS.setFloat("PosG0",Eric_AfterGrab_Pos[0]);
+    NVS.setFloat("PosG1",Eric_AfterGrab_Pos[1]);
+    NVS.setFloat("PosG2",Eric_AfterGrab_Pos[2]);
+    NVS.setFloat("PosG3",Eric_AfterGrab_Pos[3]);
+    //Serial.println("Save Acc Speed param from Web.");
+}
+
+void SaveLandPos()
+{
+  for(int i=0;i<DOF_NUM;i++)
+    {
+      if(Eric_Arm_Status[i] == DETECTED)
+      {   
+          Eric_AfterGrab_Pos[i] = float(Eric_Arm_FB[i].pos);
+      }
+    }
+    //Save
+    NVS.setFloat("PosL0",Eric_Land_Pos[0]);
+    NVS.setFloat("PosL1",Eric_Land_Pos[1]);
+    NVS.setFloat("PosL2",Eric_Land_Pos[2]);
+    NVS.setFloat("PosL3",Eric_Land_Pos[3]);
+}
+
+void Move_To_Grab_Pos()
+{
+  st.RegWritePosEx(Eric_Arm_ID[WRIST_2],Eric_AfterGrab_Pos[WRIST_2],Eric_Desire_Speed[WRIST_2]);
+  vTaskDelay(3000/portTICK_PERIOD_MS);
+  st.RegWritePosEx(Eric_Arm_ID[ELBOW],Eric_AfterGrab_Pos[ELBOW],Eric_Desire_Speed[ELBOW]);
+
 }
 //Move to Set Pos
 void Move_To_Desired_Pos()

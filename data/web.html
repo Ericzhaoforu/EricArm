@@ -424,6 +424,14 @@
             <p>
                 <button class="button" onclick="SavePos();">Save Cur Pos</button>
             </p>
+            <p class="illu">Save Grab Pos</p>
+            <p>
+                <button class="button" onclick="SavePosGrab();">Save Grab Pos</button>
+            </p>
+            <p class="illu">Save Land Pos</p>
+            <p>
+                <button class="button" onclick="SavePosLand();">Save Land Pos</button>
+            </p>
         </div>
     </div>
     <div class="h1">
@@ -633,6 +641,20 @@
             var r=confirm("Save Current Pos as initialize Pos?");
             if(r==true){
                 toggleCheckbox(2, 7, 0, 0);
+            }
+        }
+
+        function SavePosGrab(){
+            var r=confirm("Save Current Pos as Grab Pos?");
+            if(r==true){
+                toggleCheckbox(2, 9, 0, 0);
+            }
+        }
+        function SavePosLand()
+        {
+            var r=confirm("Save Current Pos as Land Pos?");
+            if(r==true){
+                toggleCheckbox(2, 10, 0, 0);
             }
         }
 
@@ -867,32 +889,41 @@
                                     case 4:
                                         toggleCheckbox(9, 0, 0, 0);
                                         break;
+                                    //Set Grab Pos
+                                    case 5:
+                                        toggleCheckbox(8,0,0,0);
+                                        break;
+                                    //Set Land Pos
+                                    case 1:
+                                        toggleCheckbox(7,0,0,0);
+                                        break;
                                     //Pos ctrl Servo 1
-                                    case 14: 
+                                    case 0: 
                                         toggleCheckbox(1,6,0,0);
                                         break;
-                                    case 15: 
+                                    case 3: 
                                         toggleCheckbox(1,5,0,0);
                                         break;
                                     //Pos ctrl Servo 2
-                                    case 13: 
+                                    case 14: 
                                         toggleCheckbox(1,6,1,0);
                                         break;
-                                    case 12: 
+                                    case 15: 
                                         toggleCheckbox(1,5,1,0); 
                                         break;   
                                     //Pos ctrl Servo 3
-                                    case 2: 
+                                    case 10: 
                                         toggleCheckbox(1,6,2,0);
+                                        console.log("pressed 10");
                                         break;
-                                    case 1: 
+                                    case 11: 
                                         toggleCheckbox(1,5,2,0); 
                                         break;
                                     //Pos ctrl Servo 4
-                                    case 0: 
+                                    case 13: 
                                         toggleCheckbox(1,6,3,0);
                                         break;
-                                    case 3: 
+                                    case 12: 
                                         toggleCheckbox(1,5,3,0); 
                                         break;   
                                     default: 
@@ -911,31 +942,31 @@
                                 switch(index)
                                 {
                                     //Pos ctrl Servo 1
-                                    case 14: 
+                                    case 0: 
                                         toggleCheckbox(1,2,0,0);
                                         break;
-                                    case 15: 
+                                    case 3: 
                                         toggleCheckbox(1,2,0,0);
                                         break;
                                     //Pos ctrl Servo 2
-                                    case 13: 
+                                    case 14: 
                                         toggleCheckbox(1,2,1,0);
                                         break;
-                                    case 12: 
+                                    case 15: 
                                         toggleCheckbox(1,2,1,0); 
                                         break;   
                                     //Pos ctrl Servo 3
-                                    case 2: 
+                                    case 10: 
                                         toggleCheckbox(1,2,2,0);
                                         break;
-                                    case 1: 
+                                    case 11: 
                                         toggleCheckbox(1,2,2,0); 
                                         break;
                                     //Pos ctrl Servo 4
-                                    case 0: 
+                                    case 13: 
                                         toggleCheckbox(1,2,3,0);
                                         break;
-                                    case 3: 
+                                    case 12: 
                                         toggleCheckbox(1,2,3,0); 
                                         break;   
                                     default: 

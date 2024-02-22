@@ -116,6 +116,8 @@ void Interface_Setup()
     Thread_Init();
     Serial.println(F("THREAD OK."));
     matrix.setPixelColor(1,0,255,0);
+
+    Move_To_Desired_Pos();
 }
 
 /*
@@ -195,6 +197,8 @@ void NVS_Init()
     {
         Serial.println("NVS Err.");
     }
+    //To write eprom, uncommand this
+    //NVS.setInt("isExist",-1);
     //Check if terms is Exist
     if(NVS.getInt("isExist", -1)==-1)
     {
@@ -213,6 +217,16 @@ void NVS_Init()
         NVS.setFloat("Pos1",Eric_Initial_Pos[1]);
         NVS.setFloat("Pos2",Eric_Initial_Pos[2]);
         NVS.setFloat("Pos3",Eric_Initial_Pos[3]);
+        
+        NVS.setFloat("PosG0",Eric_AfterGrab_Pos[0]);
+        NVS.setFloat("PosG1",Eric_AfterGrab_Pos[1]);
+        NVS.setFloat("PosG2",Eric_AfterGrab_Pos[2]);
+        NVS.setFloat("PosG3",Eric_AfterGrab_Pos[3]);
+
+        NVS.setFloat("PosL0",Eric_Land_Pos[0]);
+        NVS.setFloat("PosL1",Eric_Land_Pos[1]);
+        NVS.setFloat("PosL2",Eric_Land_Pos[2]);
+        NVS.setFloat("PosL3",Eric_Land_Pos[3]);
 
         NVS.setInt("isExist",1);
         Serial.println("Set default Speed,Acc,Pos values to NVS");
@@ -235,6 +249,7 @@ void NVS_Init()
         Eric_Desire_Acc[1] = s16(NVS.getInt("Acc1"));
         Eric_Desire_Acc[2] = s16(NVS.getInt("Acc2"));
         Eric_Desire_Acc[3] = s16(NVS.getInt("Acc3"));
+
         Serial.println("acc");
         Serial.println(Eric_Desire_Acc[0]);
         Serial.println(Eric_Desire_Acc[1]);
@@ -251,6 +266,27 @@ void NVS_Init()
         Serial.println(Eric_Initial_Pos[1]);
         Serial.println(Eric_Initial_Pos[2]);
         Serial.println(Eric_Initial_Pos[3]);
+
+        Eric_AfterGrab_Pos[0] = NVS.getFloat("PosG0");
+        Eric_AfterGrab_Pos[1] = NVS.getFloat("PosG1");
+        Eric_AfterGrab_Pos[2] = NVS.getFloat("PosG2");
+        Eric_AfterGrab_Pos[3] = NVS.getFloat("PosG3");
+        Serial.println("PosG");
+        Serial.println(Eric_AfterGrab_Pos[0]);
+        Serial.println(Eric_AfterGrab_Pos[1]);
+        Serial.println(Eric_AfterGrab_Pos[2]);
+        Serial.println(Eric_AfterGrab_Pos[3]);
+
+        Eric_Land_Pos[0] = NVS.getFloat("PosL0");
+        Eric_Land_Pos[1] = NVS.getFloat("PosL1");
+        Eric_Land_Pos[2] = NVS.getFloat("PosL2");
+        Eric_Land_Pos[3] = NVS.getFloat("PosL3");
+        Serial.println("PosL");
+        Serial.println(Eric_Land_Pos[0]);
+        Serial.println(Eric_Land_Pos[1]);
+        Serial.println(Eric_Land_Pos[2]);
+        Serial.println(Eric_Land_Pos[3]);
+
     }
 
     Serial.println("NVS loaded.");

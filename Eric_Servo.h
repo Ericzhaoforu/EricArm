@@ -1,6 +1,6 @@
 #include "SCServo.h"
-#define ELBOW_ID 11
-#define WRIST_UP_DOWN_ID 13
+#define ELBOW_ID 13
+#define WRIST_UP_DOWN_ID 11
 #define WRIST_SPAN_ID 14
 #define HAND_ID  15
 
@@ -22,6 +22,7 @@
 // === ST Servo
 SMS_STS st;
 float ServoDigitalRange_ST  = 4095.0;
+float Eric_Range_upper[4] = {2700.0, 4095.0, 4095.0 ,3410.0};
 float ServoAngleRange_ST    = 360.0;
 float ServoDigitalMiddle_ST = 2047.0;
 int ERIC_PART_SELECT = ELBOW;
@@ -54,8 +55,9 @@ bool searchCmd = false;
 s16 Eric_Desire_Speed[4] = {200,200,200,200};
 s16 Eric_Desire_Acc[4] = {100,100,100,100};
 float Eric_Initial_Pos[4] = {2047.0,2047.0,2047.0,2047.0};
-
-
+float Eric_AfterGrab_Pos[4] = {2047.0,2047.0,2047.0,2047.0};
+float Eric_Land_Pos[4] = {2047,2047,2047,2047};
+float Eric_Elbow_limit = 4095;
 // the buffer of the bytes read from USB-C and servos. 
 int usbRead;
 int stsRead;

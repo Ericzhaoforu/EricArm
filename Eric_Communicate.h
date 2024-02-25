@@ -194,8 +194,10 @@ void webCtrlServer(){
           case 2:Whole_Ctrl(cmdI);break;
           case 6: Move_To_Land_Pos_Wrist_Elbow();break;
           case 7: Move_To_Land_Pos_Elbow_Wrist();break;
-          case 8: Move_To_Grab_Pos();break;
-          case 9: Move_To_Desired_Pos();break;
+          case 8: //Move_To_Grab_Pos();
+          break;
+          case 9: //Move_To_Desired_Pos();
+          break;
         }
   });
 

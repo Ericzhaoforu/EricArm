@@ -116,8 +116,8 @@ void Interface_Setup()
     Thread_Init();
     Serial.println(F("THREAD OK."));
     matrix.setPixelColor(1,0,255,0);
-
-    Move_To_Desired_Pos();
+    Move_To_Land_Pos_Elbow_Wrist();
+    //Move_To_Desired_Pos();
 }
 
 /*

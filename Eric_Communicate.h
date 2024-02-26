@@ -182,6 +182,22 @@ void webCtrlServer(){
           file.close();
       });
     server.on("/cmd", [](){
+    
+    double X = server.arg(0).toDouble();
+    double Y = server.arg(1).toDouble(); 
+    double T = server.arg(2).toDouble();
+    double input_spd = server.arg(3).toDouble();
+    //coordinate input
+    if(X>=10)
+    {
+      if(X>0&&Y>0&&input_spd>0)
+      {
+        // Serial.printf("transmission received %lf\n",get_Current_time());
+        RoArmM2_allPosAbsBesselCtrl(X,Y,T,input_spd);
+      }
+    }
+    else
+    {
     int cmdT = server.arg(0).toInt();
     int cmdI = server.arg(1).toInt();
     int cmdA = server.arg(2).toInt();
@@ -199,6 +215,7 @@ void webCtrlServer(){
           case 9: //Move_To_Desired_Pos();
           break;
         }
+    }
   });
 
   // Start server

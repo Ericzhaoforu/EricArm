@@ -210,8 +210,14 @@ void webCtrlServer(){
           case 2:Whole_Ctrl(cmdI);break;
           case 6: Move_To_Land_Pos_Wrist_Elbow();break;
           case 7: Move_To_Land_Pos_Elbow_Wrist();break;
-          case 8: //Move_To_Grab_Pos();
-          break;
+          case 8: 
+                  //CoordinateCtrl(L1,L2,0); 
+                  //goalPosMove();
+                  //lastX = L1;
+                  //lastY=  L2;
+
+          //Move_To_Grab_Pos();
+                  break;
           case 9: //Move_To_Desired_Pos();
           break;
         }
@@ -225,7 +231,8 @@ void webCtrlServer(){
 
 void handle_defaultPos(){
   String cont ="";
-  cont+="E:"+String(Eric_Initial_Pos[0])+" W:"+Eric_Initial_Pos[1]+" H:"+Eric_Initial_Pos[2]+" W2:"+Eric_Initial_Pos[3];
+  //cont+="E:"+String(Eric_Initial_Pos[0])+" W:"+Eric_Initial_Pos[1]+" H:"+Eric_Initial_Pos[2]+" W2:"+Eric_Initial_Pos[3];
+  cont+="X:"+String(showX)+" Y:"+(showY);
   server.send(200, "text/plane", cont);
 }
 void handle_TotalC(){
@@ -239,7 +246,7 @@ void handle_TotalC(){
       TC+=Eric_Arm_FB[i].current*0.0065;
     }
   }
-  Serial.println(TC,4);
+  //Serial.println(TC,4);
   server.send(200, "text/plane", String(TC,4));
 }
 /*
@@ -498,7 +505,7 @@ void Individual_ctrl(int ctrltype,int ctrlpart)
       break;
     //(1,7,x,0) desire speed +
     case 7:
-      Eric_Desire_Speed[ctrlpart] += 50;
+      Eric_Desire_Speed[ctrlpart] += 10;
       //if larger than max speed 4000,then set to 4000
       if (Eric_Desire_Speed[ctrlpart]>ServoMaxSpeed_ST)
       {
@@ -507,7 +514,7 @@ void Individual_ctrl(int ctrltype,int ctrlpart)
       break;
     //(1,8,x,0) desired speed - 
     case 8:
-      Eric_Desire_Speed[ctrlpart]+=-50;
+      Eric_Desire_Speed[ctrlpart]+=-10;
       //if smaller than 0, set to 0
       if(Eric_Desire_Speed[ctrlpart]<0)
       {

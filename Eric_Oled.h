@@ -71,6 +71,7 @@ void InfoUpdateThreading(void *pvParameter){
     screenUpdate();
     Eric_Servo_Check(searchCmd);
     RainBow();
+    kinematics_update_X_Y_T(0);
     delay(threadingInterval); 
   }
 }

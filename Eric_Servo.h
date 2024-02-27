@@ -23,7 +23,7 @@
 
 #define BESSEL_MAX_LOG_NUM 2048
 double L1= 222.324;
-double L2= 98.426;
+double L2= 49.500;
 // === ST Servo
 SMS_STS st;
 float ServoDigitalRange_ST  = 4095.0;
@@ -48,6 +48,8 @@ double lastX = goalX;
 double lastY = goalY;
 double lastT = goalT;
 
+double showX = 0;
+double showY = 0;
 bool nanIK;
 #define ServoInitACC_ST      100
 #define ServoMaxSpeed_ST     4000
@@ -112,6 +114,8 @@ void CoordinateCtrl(double inputX, double inputY, double inputT);
 void lastPosUpdate();
 int64_t get_Current_time();
 void log_msg(int counter);
+double Pos_to_Rad(float pos);
+void kinematics_update_X_Y_T(bool updatelastXY);
 
 void getFeedBack(){
 
@@ -201,14 +205,24 @@ void simpleLinkageIkRad(double L1, double L2, double X, double Y) {
     //printf("%f\n",(L1 * L1 + L2C - L2 * L2) / (2 * L1 * LC));
     psi = acos((L1 * L1 + L2C - L2 * L2) / (2 * L1 * LC));
     //printf("psi:%f,\n",psi);
-    alpha = M_PI / 2.0 - Lambda - psi;
+    alpha = M_PI / 2.0 - Lambda + psi;
+    
     omega = acos((L2 * L2 + L2C - L1 * L1) / (2 * LC * L2));
     //printf("omega:%f,\n",omega);
     beta = psi + omega;
+
+    //when alpha>pi/2, means theta1<0(theta = pi/2-alpha), then we should chose other set of solution:
+    if(alpha>M_PI/2+0.00001)
+    {
+      alpha = M_PI / 2.0 - Lambda - psi;
+      //The beta should be inversed
+      beta = -beta;
+    }
   }
+  
 
   delta = M_PI / 2.0 - alpha - beta;
-  Serial.printf("alpha:%f,beta:%f\n",alpha,beta);
+  //Serial.printf("alpha:%f,beta:%f\n",alpha/M_PI*180,beta/M_PI*180);
   ELBOW_JOINT_RAD = alpha;
   WRIST_JOINT_RAD = beta;
   HAND_ROTATE_JOINT_RAD = delta;
@@ -234,7 +248,7 @@ void Rad_Ctrl_ELBOW(double radInput)
 void Rad_Ctrl_WRIST(double radInput)
 {
   // this - defines the correct motion direction
-  radInput = -constrain(radInput, -M_PI/2, M_PI/2);
+  radInput = constrain(radInput, -M_PI/2, M_PI/2);
 
   float pos_desired = constrain(Rad_To_Pos(radInput)+ServoDigitalMiddle_ST,ARM_SERVO_POS_RANGE-Eric_Range_upper[WRIST_2],Eric_Range_upper[WRIST_2]);
   goalpos[WRIST_2] = pos_desired;
@@ -393,4 +407,31 @@ void log_msg(int counter)
   {
     Serial.printf("X:%f,Y:%f,T:%lld\n",bessels[i].x,bessels[i].y,bessels[i].time);
   }
+}
+
+double Pos_to_Rad(float pos)
+{
+  return double(pos/4096*2*M_PI);
+}
+//Get LastX,lastY based on servo position
+void kinematics_update_X_Y_T(bool update_last)
+{
+  float elbow_pos = Eric_Arm_FB[ELBOW].pos;
+  float wrist_1_pos =Eric_Arm_FB[WRIST_2].pos;
+  float wrist_spin_pos = Eric_Arm_FB[WRIST].pos;
+  // elbow_pos = 2388;
+  // wrist_1_pos = 2388;
+  // wrist_spin_pos = 2047;
+  double theta1 = Pos_to_Rad(elbow_pos-ServoDigitalMiddle_ST);
+  double theta2 = Pos_to_Rad(wrist_1_pos-ServoDigitalMiddle_ST);
+  double theta3 = Pos_to_Rad(wrist_spin_pos-ServoDigitalMiddle_ST);
+  if(update_last)
+  {
+    lastX = L1*cos(theta1)+L2*cos(theta1+theta2);
+    lastY = L1*sin(theta1)+L2*sin(theta1+theta2);
+    lastT = theta3;
+  }
+  showX = L1*cos(theta1)+L2*cos(theta1+theta2);
+  showY = L1*sin(theta1)+L2*sin(theta1+theta2);
+  //Serial.printf("X:%lfY:%lf\n",showX,showY);
 }

@@ -21,8 +21,8 @@
 #define SERVO_MODE 0
 #define ARM_SERVO_POS_RANGE 4096
 
-#define BESSEL_MAX_LOG_NUM 2048
-double L1= 222.324;
+#define BESSEL_MAX_LOG_NUM 1024
+double L1= 212.324;
 double L2= 49.500;
 // === ST Servo
 SMS_STS st;
@@ -81,6 +81,12 @@ struct Bessel {
   int64_t time;
 } bessels[BESSEL_MAX_LOG_NUM];
 
+struct Real_Pos{
+  double x;
+  double y;
+  //double z;
+  int64_t time;
+} real_pos[BESSEL_MAX_LOG_NUM];
 bool searchCmd = false;
 
 s16 Eric_Desire_Speed[4] = {200,200,200,200};
@@ -113,9 +119,11 @@ double besselCtrl(double numStart, double numEnd, double rateInput);
 void CoordinateCtrl(double inputX, double inputY, double inputT);
 void lastPosUpdate();
 int64_t get_Current_time();
-void log_msg(int counter);
+void log_msg(int counter,int idx);
 double Pos_to_Rad(float pos);
 void kinematics_update_X_Y_T(bool updatelastXY);
+void Get_Current_pos_X_Y(int count,int idx);
+
 
 void getFeedBack(){
 
@@ -291,7 +299,8 @@ void RoArmM2_allPosAbsBesselCtrl(double inputX, double inputY, double inputT, do
 void RoArmM2_movePosGoalfromLast(float spdInput){
   double deltaSteps = maxNumInArray();
   //Counter the steps in bessel intepolate
-  int counter =0 ;
+  int counter =0;
+  int idx=0;
   double bufferX;
   double bufferY;
   double bufferT;
@@ -332,9 +341,14 @@ void RoArmM2_movePosGoalfromLast(float spdInput){
     bessels[counter].y = bufferLastY;
     bessels[counter].z = 0;
     bessels[counter].time = get_Current_time();
-
+    if(counter%6==0)
+    {
+      Get_Current_pos_X_Y(counter,idx);
+      idx+=1;
+    }
+    
     goalPosMove();
-    delay(2);
+    delay(15);
     counter+=1;
   }
   CoordinateCtrl(goalX, goalY, goalT);
@@ -342,9 +356,11 @@ void RoArmM2_movePosGoalfromLast(float spdInput){
   bessels[counter].y=goalY;
   bessels[counter].z=0;
   bessels[counter].time = get_Current_time();
+  idx+=1;
+  Get_Current_pos_X_Y(counter,idx);
   goalPosMove();
   lastPosUpdate();
-  log_msg(counter);
+  log_msg(counter,idx);
 }
 
 
@@ -399,13 +415,17 @@ int64_t get_Current_time()
   return time_us;
 }
 
-void log_msg(int counter)
+void log_msg(int counter,int idx)
 {
-  Serial.printf("Start time: %lld",start_time);
+  Serial.printf("Start time: %lld\n",start_time);
   //not for log yet just print out to uart
   for(int i=0;i<=counter;i++)
   {
     Serial.printf("X:%f,Y:%f,T:%lld\n",bessels[i].x,bessels[i].y,bessels[i].time);
+  }
+  for(int i=0;i<=idx;i++)
+  {
+    Serial.printf("rX:%f,rY:%f,T:%lld\n",real_pos[i].x,real_pos[i].y,real_pos[i].time);
   }
 }
 
@@ -434,4 +454,16 @@ void kinematics_update_X_Y_T(bool update_last)
   showX = L1*cos(theta1)+L2*cos(theta1+theta2);
   showY = L1*sin(theta1)+L2*sin(theta1+theta2);
   //Serial.printf("X:%lfY:%lf\n",showX,showY);
+}
+
+
+void Get_Current_pos_X_Y(int count,int cur_idx)
+{
+  float elbow_pos = st.ReadPos(Eric_Arm_ID[ELBOW]);
+  float wrist_1_pos =st.ReadPos(Eric_Arm_ID[WRIST_2]);
+  double theta1 = Pos_to_Rad(elbow_pos-ServoDigitalMiddle_ST);
+  double theta2 = Pos_to_Rad(wrist_1_pos-ServoDigitalMiddle_ST);
+  real_pos[cur_idx].x = L1*cos(theta1)+L2*cos(theta1+theta2);
+  real_pos[cur_idx].y = L1*sin(theta1)+L2*sin(theta1+theta2);
+  real_pos[cur_idx].time =bessels[count].time;
 }

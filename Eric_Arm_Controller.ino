@@ -22,7 +22,7 @@ void setup() {
   
   kinematics_update_X_Y_T(1);
   
-  // delay(3000);
+  delay(3000);
   // RoArmM2_allPosAbsBesselCtrl(113.74543,223.593208,0,0.36);
   // delay(8000);
   // RoArmM2_allPosAbsBesselCtrl(198.5757,115.865,0,0.36);

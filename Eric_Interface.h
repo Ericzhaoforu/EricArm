@@ -3,7 +3,7 @@
 #include "Eric_Servo.h"
 #define GENERAL_ROBOT_BOARD 1
 #define DRIVER_BOARD 2
-#define BOARD_TYPE DRIVER_BOARD
+#define BOARD_TYPE GENERAL_ROBOT_BOARD
 
 #define CONSOLE_BAUD_RATE 115200
 #define SERVO_BAUD_RATE 1000000
@@ -116,7 +116,7 @@ void Interface_Setup()
     Thread_Init();
     Serial.println(F("THREAD OK."));
     matrix.setPixelColor(1,0,255,0);
-    Move_To_Land_Pos_Elbow_Wrist();
+    Move_To_Land_Pos_Elbow_Wrist(); 
     //Move_To_Desired_Pos();
 }
 

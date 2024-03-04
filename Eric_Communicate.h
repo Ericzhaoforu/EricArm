@@ -481,7 +481,20 @@ void Individual_ctrl(int ctrltype,int ctrlpart)
       if(Eric_Arm_FB[ctrlpart].mode==0)
       {
         //pos limited
-        st.WritePosEx(Eric_Arm_ID[ctrlpart], Eric_Range_upper[ctrlpart] - 1, Eric_Desire_Speed[ctrlpart], Eric_Desire_Acc[ctrlpart]);
+        //caution limit wrist up down when elbow is high
+        float range_upper = Eric_Range_upper[ctrlpart] -1;
+        if(ctrlpart ==3)
+        {
+          //if elbow high
+          Serial.printf("Controlling wrist 2\n");
+          if(Eric_Arm_FB[0].pos>2700.0)
+          {
+            Serial.printf("change upper\n");
+            range_upper =2048.0;
+          }
+        }
+        st.WritePosEx(Eric_Arm_ID[ctrlpart], range_upper, Eric_Desire_Speed[ctrlpart], Eric_Desire_Acc[ctrlpart]);
+        
       }
       //Motor Mode
       if(Eric_Arm_FB[ctrlpart].mode==3)
@@ -494,8 +507,17 @@ void Individual_ctrl(int ctrltype,int ctrlpart)
       //Servo Mode
       if(Eric_Arm_FB[ctrlpart].mode==0)
       {
+        float lower=0.0;
         //pos limited
-        st.WritePosEx(Eric_Arm_ID[ctrlpart], 0, Eric_Desire_Speed[ctrlpart], Eric_Desire_Acc[ctrlpart]);
+        if(ctrlpart==0)
+        {
+            lower=2048-1;
+        }
+        if(ctrlpart==3)
+        {
+          lower = 4096 - Eric_Range_upper[ctrlpart] -1;
+        }
+        st.WritePosEx(Eric_Arm_ID[ctrlpart], lower, Eric_Desire_Speed[ctrlpart], Eric_Desire_Acc[ctrlpart]);
       }
       //Motor Mode
       if(Eric_Arm_FB[ctrlpart].mode==3)

@@ -22,7 +22,7 @@
 #define ARM_SERVO_POS_RANGE 4096
 
 #define BESSEL_MAX_LOG_NUM 1024
-double L1= 212.324;
+double L1= 222.324;
 double L2= 49.500;
 // === ST Servo
 SMS_STS st;
@@ -417,16 +417,20 @@ int64_t get_Current_time()
 
 void log_msg(int counter,int idx)
 {
+  
   Serial.printf("Start time: %lld\n",start_time);
   //not for log yet just print out to uart
+
+  
   for(int i=0;i<=counter;i++)
   {
     Serial.printf("X:%f,Y:%f,T:%lld\n",bessels[i].x,bessels[i].y,bessels[i].time);
   }
-  for(int i=0;i<=idx;i++)
-  {
-    Serial.printf("rX:%f,rY:%f,T:%lld\n",real_pos[i].x,real_pos[i].y,real_pos[i].time);
-  }
+
+  // for(int i=0;i<=idx;i++)
+  // {
+  //   Serial.printf("rX:%f,rY:%f,T:%lld\n",real_pos[i].x,real_pos[i].y,real_pos[i].time);
+  // }
 }
 
 double Pos_to_Rad(float pos)

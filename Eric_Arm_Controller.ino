@@ -4,6 +4,7 @@ The code took the ST3215 Driver as a reference
 The object of this project is to utilize remote control of the arm , including set the initialize position and open loop control
 */
 
+#include "SD.h"
 
 #include "Eric_Interface.h"
 void setup() {
@@ -43,4 +44,3 @@ void loop() {
     delay(500);
     //Serial.println(time_us);
 }
-

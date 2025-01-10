@@ -27,7 +27,7 @@ double L2= 49.500;
 // === ST Servo
 SMS_STS st;
 float ServoDigitalRange_ST  = 4095.0;
-float Eric_Range_upper[4] = {2700.0, 4095.0, 4095.0 ,3410.0};
+float Eric_Range_upper[4] = {4000.0, 4095.0, 4095.0 ,3410.0};
 float ServoDigitalMiddle_ST = 2047.0;
 float goalpos[4] = {ServoDigitalMiddle_ST,ServoDigitalMiddle_ST,ServoDigitalMiddle_ST,ServoDigitalMiddle_ST};
 float ServoAngleRange_ST    = 360.0;
